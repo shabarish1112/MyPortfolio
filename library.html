@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Shabarish Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <div id="root-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="education.html">Education</a>
+            <a href="skills.html">Skills</a>
+            <a href="projects.html" class="active">Projects</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+
+        <header class="short-header">
+            <h1>Library System</h1>
+            <p>Efficient Database Management Solution</p>
+        </header>
+
+        <section class="visible">
+            <div class="detail-container">
+                <div class="project-meta">
+                    <span class="tag">SQL</span>
+                    <span class="tag">Database Design</span>
+                    <span class="tag">Backend</span>
+                </div>
+
+                <h2>Overview</h2>
+                <p>
+                    The Library Management System is a comprehensive database solution designed to streamline the
+                    day-to-day
+                    operations of a library.
+                    It handles the complete lifecycle of book management, from acquisition and cataloging to member
+                    registration and circulation control.
+                    Built with a focus on data integrity and efficient retrieval, it ensures that library resources are
+                    managed effectively.
+                </p>
+
+                <h2 class="section-heading">Key Features</h2>
+                <ul class="feature-list">
+                    <li><strong>Book Inventory:</strong> Detailed catalog with classification by genre, author, and
+                        publisher.</li>
+                    <li><strong>Member Management:</strong> Track member subscriptions, borrowing history, and contact
+                        details.</li>
+                    <li><strong>Circulation Control:</strong> Efficient check-in and check-out processes with due date
+                        tracking.</li>
+                    <li><strong>Fine Calculation:</strong> Automated calculation of late fees based on return dates.
+                    </li>
+                    <li><strong>Search & Retrieval:</strong> Optimized queries for fast lookup of books and availability
+                        status.</li>
+                </ul>
+
+                <h2 class="section-heading">Technologies Used</h2>
+                <p class="text-muted">
+                    Core database architecture implemented using <strong>SQL</strong> (MySQL/PostgreSQL) with a focus on
+                    normalization and relational integrity.
+                </p>
+
+                <!-- ER Diagram Section -->
+                <h2 class="mt-60">Database Structure</h2>
+                <p class="text-muted">Visual representation of the database entities and relationships.
+                </p>
+                <div class="er-diagram-container">
+                    <img src="Library_ER_Diagram.png" alt="Library Management System ER Diagram" class="er-diagram-img">
+                </div>
+
+                <!-- SQL Code Section -->
+                <h2 class="mt-60">Schema Design (SQL)</h2>
+                <p class="text-muted">The robust relational database structure powering the system.</p>
+                <div class="code-snippet">
+                    <pre>CREATE DATABASE IF NOT EXISTS library_db;
+USE library_db;
+
+CREATE TABLE Book(
+book_id INT PRIMARY KEY AUTO_INCREMENT,
+title VARCHAR(100) NOT NULL,
+author VARCHAR(100),
+category VARCHAR(50),
+status VARCHAR(20)DEFAULT 'Available'
+);
+
+CREATE TABLE Member (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15)
+);
+
+CREATE TABLE Issue_Record (
+    issue_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    member_id INT,
+    issue_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES Book(book_id),
+    FOREIGN KEY (member_id) REFERENCES Member(member_id)
+);
+
+CREATE TABLE Author (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,
+    author_name VARCHAR(100) NOT NULL,
+    nationality VARCHAR(50)
+);
+
+CREATE TABLE Publisher (
+    publisher_id INT PRIMARY KEY AUTO_INCREMENT,
+    publisher_name VARCHAR(100) NOT NULL,
+    country VARCHAR(50)
+);
+
+CREATE TABLE Category (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- (Sample Data Insertions Omitted for Brevity) --
+
+CREATE TABLE Fine (
+    fine_id INT PRIMARY KEY AUTO_INCREMENT,
+    issue_id INT,
+    amount DECIMAL(6,2),
+    paid_status VARCHAR(10) DEFAULT 'Unpaid',
+    FOREIGN KEY (issue_id) REFERENCES Issue_Record(issue_id)
+);</pre>
+                </div>
+
+                <!-- Try Library System Demo Section -->
+                <div class="demo-card">
+                    <h2 class="text-center mb-30">Try Library System Live</h2>
+                    <p class="text-center text-muted mb-30 font-small">
+                        (Simulated Database Dashboard)
+                    </p>
+
+                    <div class="demo-container-inner">
+
+                        <!-- Controls -->
+                        <div class="demo-row flex-wrap">
+                            <input type="text" id="searchInput" class="demo-input flex-2"
+                                placeholder="Search by Title or Author..." onkeyup="filterBooks()">
+                            <button onclick="showAddModal()" class="demo-btn-primary flex-1 no-wrap">+ Add Book</button>
+                        </div>
+
+                        <!-- Simulated Table -->
+                        <div class="demo-table-container">
+                            <table class="demo-table">
+                                <thead class="demo-table-head">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Book Title</th>
+                                        <th>Author</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookTableBody">
+                                    <!-- JS will populate this -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Add Book Form (Inline for simplicity) -->
+                        <div id="addBookForm" class="add-book-form">
+                            <h4 class="mt-0 mb-15">Add New Book</h4>
+                            <div class="add-book-controls">
+                                <input type="text" id="newTitle" class="demo-input" placeholder="Book Title">
+                                <input type="text" id="newAuthor" class="demo-input" placeholder="Author Name">
+                            </div>
+                            <div class="demo-btn-group">
+                                <button onclick="addBook()" class="demo-btn-primary">Save to Database</button>
+                                <button onclick="hideAddModal()" class="demo-btn-secondary">Cancel</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <script>
+                    // Simulated Database (Data from library.sql)
+                    let books = [
+                        { id: 1, title: "DBMS", author: "Korth", status: "Available" },
+                        { id: 2, title: "Operating Systems", author: "Silberschatz", status: "Available" },
+                        { id: 3, title: "Computer Networks", author: "Tanenbaum", status: "Available" },
+                        { id: 4, title: "Data Structures", author: "Mark Allen Weiss", status: "Available" },
+                        { id: 5, title: "Algorithms", author: "CLRS", status: "Available" },
+                        { id: 6, title: "Software Engineering", author: "Pressman", status: "Available" },
+                        { id: 7, title: "Artificial Intelligence", author: "Russell", status: "Available" },
+                        { id: 8, title: "Machine Learning", author: "Tom Mitchell", status: "Available" },
+                        { id: 9, title: "Deep Learning", author: "Goodfellow", status: "Available" },
+                        { id: 10, title: "Python Programming", author: "Guido", status: "Available" },
+                        { id: 11, title: "Java Programming", author: "Herbert Schildt", status: "Available" },
+                        { id: 12, title: "C Programming", author: "Dennis Ritchie", status: "Available" },
+                        { id: 13, title: "Web Development", author: "Duckett", status: "Available" },
+                        { id: 14, title: "ReactJS", author: "Banks", status: "Available" },
+                        { id: 15, title: "NodeJS", author: "Cantelon", status: "Available" },
+                        { id: 16, title: "MySQL Essentials", author: "DuBois", status: "Available" },
+                        { id: 17, title: "Cloud Computing", author: "Buyya", status: "Available" },
+                        { id: 18, title: "Cyber Security", author: "Stallings", status: "Available" },
+                        { id: 19, title: "Data Mining", author: "Han", status: "Available" },
+                        { id: 20, title: "Physics", author: "Resnick", status: "Available" }
+                    ];
+
+                    const tableBody = document.getElementById('bookTableBody');
+                    const addForm = document.getElementById('addBookForm');
+                    const searchInput = document.getElementById('searchInput');
+
+                    function renderTable(data) {
+                        tableBody.innerHTML = '';
+                        if (data.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted p-20">No books found.</td></tr>';
+                            return;
+                        }
+
+                        data.forEach(book => {
+                            const row = document.createElement('tr');
+                            // row.style.borderBottom = '1px solid var(--border-color)'; (Moved to CSS)
+
+                            const statusColor = book.status === 'Available' ? '#10b981' : '#ef4444'; // Green or Red
+
+                            row.innerHTML = `
+                            <td>${book.id}</td>
+                            <td class="font-medium">${book.title}</td>
+                            <td>${book.author}</td>
+                            <td><span style="color: ${statusColor}; font-size: 0.85rem;">● ${book.status}</span></td>
+                            <td>
+                                <button onclick="toggleStatus(${book.id})" class="small-btn">
+                                    ${book.status === 'Available' ? 'Borrow' : 'Return'}
+                                </button>
+                            </td>
+                        `;
+                            tableBody.appendChild(row);
+                        });
+                    }
+
+                    function filterBooks() {
+                        const term = searchInput.value.toLowerCase();
+                        const filtered = books.filter(book =>
+                            book.title.toLowerCase().includes(term) ||
+                            book.author.toLowerCase().includes(term)
+                        );
+                        renderTable(filtered);
+                    }
+
+                    function toggleStatus(id) {
+                        const book = books.find(b => b.id === id);
+                        if (book) {
+                            book.status = book.status === 'Available' ? 'Borrowed' : 'Available';
+                            renderTable(books); // Re-render to show update
+                            filterBooks(); // Maintain filter if active
+                        }
+                    }
+
+                    function showAddModal() {
+                        addForm.style.display = 'block';
+                        document.getElementById('newTitle').focus();
+                    }
+
+                    function hideAddModal() {
+                        addForm.style.display = 'none';
+                        document.getElementById('newTitle').value = '';
+                        document.getElementById('newAuthor').value = '';
+                    }
+
+                    function addBook() {
+                        const title = document.getElementById('newTitle').value;
+                        const author = document.getElementById('newAuthor').value;
+
+                        if (title && author) {
+                            const newId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 101;
+                            books.push({
+                                id: newId,
+                                title: title,
+                                author: author,
+                                status: "Available"
+                            });
+                            hideAddModal();
+                            renderTable(books);
+                        } else {
+                            alert("Please enter both Title and Author.");
+                        }
+                    }
+
+                    // Initial Render
+                    renderTable(books);
+                </script>
+                <div class="back-link">
+                    <a href="projects.html">← Back to Projects</a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 Shabarish Portfolio</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

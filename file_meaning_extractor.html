@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Metadata Extractor - Shabarish Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="education.html">Education</a>
+        <a href="skills.html">Skills</a>
+        <a href="projects.html" class="active">Projects</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+
+    <header class="short-header">
+        <h1>File Metadata Extractor</h1>
+        <p>Metadata Parsing Tool</p>
+    </header>
+
+    <section class="visible">
+        <div class="detail-container">
+            <div class="project-meta">
+                <span class="tag">Python</span>
+                <span class="tag">Flask</span>
+                <span class="tag">String Manipulation</span>
+            </div>
+
+            <h2>Overview</h2>
+            <p>
+                File Metadata Extractor is a utility tool that automates the extraction of meaningful metadata, such as
+                creation dates and times, directly from filenames.
+                It is particularly useful for organizing file archives where metadata might be lost but preserved in the
+                naming convention (e.g., WhatsApp images or camera photos).
+            </p>
+
+            <h2 class="section-heading">Key Features</h2>
+            <ul class="feature-list">
+                <li><strong>Automated Parsing:</strong> Instantly extracts date and time components from standard
+                    filename formats.</li>
+                <li><strong>Format Support:</strong> Designed to handle formats like
+                    <code>IMG_YYYYMMDD_HHMMSS.jpg</code>.
+                </li>
+                <li><strong>Data Reformatting:</strong> Converts raw string data into human-readable Date (DD-MM-YYYY)
+                    and Time (HH:MM:SS) formats.</li>
+                <li><strong>Error Handling:</strong> Validates filename patterns to ensure accurate extraction.</li>
+            </ul>
+
+            <h2 class="section-heading">Technologies Used</h2>
+            <p class="text-muted">
+                Built using <strong>Python</strong> with <strong>Flask</strong> for the web interface, demonstrating
+                backend string processing and logical validation.
+            </p>
+
+            <!-- Try It Demo Section -->
+            <div class="demo-card">
+                <h2 class="text-center mb-30">Try It Live</h2>
+                <p class="text-center text-muted mb-20">
+                    Enter a filename like <code>IMG_20240118_193012.jpg</code> to test the extraction logic.
+                </p>
+
+                <div class="demo-content">
+                    <div class="demo-input-group">
+                        <label>Filename</label>
+                        <input type="text" id="filenameInput" class="demo-input"
+                            placeholder="e.g. IMG_20240118_193012.jpg" value="IMG_20240118_193012.jpg">
+                    </div>
+
+                    <button onclick="extractMeaning()" class="primary-btn">
+                        Extract Metadata
+                    </button>
+                </div>
+
+                <div id="resultBox" class="result-box">
+                    <h3 id="dateText" class="result-date"></h3>
+                    <h3 id="timeText" class="result-time"></h3>
+                    <p id="errorText" class="error-msg"></p>
+                </div>
+            </div>
+
+            <!-- Python Code Section -->
+            <h2 class="section-heading">Core Logic (Python)</h2>
+            <p class="text-muted">The original Flask application logic.</p>
+            <div class="code-snippet">
+                <pre>from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    result = ""
+
+    if request.method == "POST":
+        filename = request.form["filename"]
+
+        # Example: IMG_20240118_193012.jpg
+        name_part = filename.split(".")[0]
+        
+        parts = name_part.split("_")
+
+        if len(parts) >= 3:
+            date = parts[1]
+            time = parts[2]
+
+            year = date[0:4]
+            month = date[4:6]
+            day = date[6:8]
+
+            hour = time[0:2]
+            minute = time[2:4]
+            second = time[4:6]
+
+            result = f"""
+            📅 Date: {day}-{month}-{year}<br>
+            ⏰ Time: {hour}:{minute}:{second}
+            """
+        else:
+            result = "❌ Filename format not recognized"
+
+    return render_template("index.html", result=result)
+
+if __name__ == "__main__":
+    app.run(debug=True)</pre>
+            </div>
+
+            <script>
+                function extractMeaning() {
+                    const filename = document.getElementById('filenameInput').value;
+                    const resultBox = document.getElementById('resultBox');
+                    const dateText = document.getElementById('dateText');
+                    const timeText = document.getElementById('timeText');
+                    const errorText = document.getElementById('errorText');
+
+                    resultBox.style.display = 'block';
+                    dateText.innerHTML = '';
+                    timeText.innerHTML = '';
+                    errorText.style.display = 'none';
+                    resultBox.style.background = 'transparent';
+                    resultBox.style.border = '1px solid var(--border-color)';
+
+                    // JS Logic mirroring the Python script
+                    try {
+                        const namePart = filename.split('.')[0];
+                        const parts = namePart.split('_');
+
+                        if (parts.length >= 3) {
+                            const date = parts[1];
+                            const time = parts[2];
+
+                            if (date.length !== 8 || time.length !== 6) {
+                                throw new Error("Invalid date/time segment length");
+                            }
+
+                            const year = date.substring(0, 4);
+                            const month = date.substring(4, 6);
+                            const day = date.substring(6, 8);
+
+                            const hour = time.substring(0, 2);
+                            const minute = time.substring(2, 4);
+                            const second = time.substring(4, 6);
+
+                            dateText.innerHTML = `📅 Date: ${day}-${month}-${year}`;
+                            timeText.innerHTML = `⏰ Time: ${hour}:${minute}:${second}`;
+
+                            resultBox.style.background = "rgba(34, 197, 94, 0.1)";
+                            resultBox.style.border = "1px solid #22c55e";
+                        } else {
+                            throw new Error("Filename format not recognized");
+                        }
+                    } catch (e) {
+                        errorText.innerText = "❌ " + e.message;
+                        errorText.style.display = 'block';
+                        resultBox.style.background = "rgba(239, 68, 68, 0.1)";
+                        resultBox.style.border = "1px solid #ef4444";
+                    }
+                }
+            </script>
+
+            <div class="back-link">
+                <a href="projects.html">← Back to Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Shabarish Portfolio</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

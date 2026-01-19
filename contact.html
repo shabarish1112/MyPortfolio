@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Shabarish</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="education.html">Education</a>
+        <a href="skills.html">Skills</a>
+        <a href="projects.html">Projects</a>
+        <a href="contact.html" class="active">Contact</a>
+    </nav>
+
+    <header class="short-header">
+        <h1>Get In Touch</h1>
+        <p>Let's collaborate on something amazing</p>
+    </header>
+
+    <section class="visible">
+        <div class="contact-card">
+            <div class="contact-label">Email</div>
+            <div class="contact-value">shabarishsilli2002@gmail.com</div>
+
+            <div class="contact-label">Phone</div>
+            <div class="contact-value">+91 7204894342</div>
+
+            <div class="contact-label">Address</div>
+            <div class="contact-value">Kailash Nagar, Shahabazar<br>Kalaburgi - 585103</div>
+        </div>
+
+        <div class="demo-card contact-form-container">
+            <h2 class="text-center mb-30">Send a Message</h2>
+            <form onsubmit="handleContactSubmit(event)">
+                <div class="demo-input-group">
+                    <label>Name</label>
+                    <input type="text" id="contactName" class="demo-input" placeholder="Your Name" required>
+                </div>
+                <div class="demo-input-group">
+                    <label>Email</label>
+                    <input type="email" id="contactEmail" class="demo-input" placeholder="Your Email" required>
+                </div>
+                <div class="demo-input-group">
+                    <label>Message</label>
+                    <textarea id="contactMessage" class="demo-input" rows="5" placeholder="Your Message"
+                        required></textarea>
+                </div>
+                <button type="submit" class="primary-btn">Send Message</button>
+                <div id="formStatus" class="mt-20 text-center hidden"></div>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Shabarish Portfolio</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

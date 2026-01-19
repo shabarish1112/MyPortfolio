@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables (contains sensitive data)
+.env
+
+# IDE and editor files
+.hintrc
+.vscode/
+.idea/
+
+# Local server files (not needed for deployment)
+server.js

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunkmate - Shabarish Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="education.html">Education</a>
+        <a href="skills.html">Skills</a>
+        <a href="projects.html" class="active">Projects</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+
+    <header class="short-header">
+        <h1>Bunkmate</h1>
+        <p>Smart Attendance Tracking Tool</p>
+    </header>
+
+    <section class="visible">
+        <div class="detail-container">
+            <div class="project-meta">
+                <span class="tag">Python</span>
+                <span class="tag">HTML/CSS</span>
+                <span class="tag">Web Development</span>
+            </div>
+
+            <h2>Overview</h2>
+            <p>
+                Bunkmate is a simple yet effective web tool designed to help students manage their attendance.
+                It calculates current attendance percentages and provides instant visual feedback—green for safe,
+                red for danger—based on a user-defined threshold.
+            </p>
+
+            <h2 class="section-heading">Key Features</h2>
+            <ul class="feature-list">
+                <li><strong>Attendance Calculator:</strong> Instantly computes percentage based on classes attended vs.
+                    total classes.</li>
+                <li><strong>Visual Alerts:</strong> Shows a Green indicator if you are safe, or Red if you are running
+                    low on attendance.</li>
+                <li><strong>Custom Limits:</strong> Users can set their own "safe" percentage threshold (e.g., 75% or
+                    85%).</li>
+                <li><strong>Responsive Interface:</strong> Works smoothly on both desktop and mobile devices.</li>
+            </ul>
+
+            <h2 class="section-heading">Technologies Used</h2>
+            <p class="text-muted">
+                Built using <strong>Python</strong> for backend logic (if applicable) and standard
+                <strong>HTML/CSS</strong>
+                for a clean, user-friendly frontend interface.
+            </p>
+
+            <!-- Try Bunkmate Demo Section -->
+            <div class="demo-card">
+                <h2 class="text-center mb-30">Try Bunkmate Live</h2>
+
+                <div id="step1" class="demo-step-1">
+                    <div class="demo-input-group">
+                        <label>Minimum Attendance Limit (%)</label>
+                        <input type="number" id="limitInput" class="demo-input" placeholder="e.g. 75" value="75">
+                    </div>
+
+                    <div class="demo-input-group">
+                        <label>Number of Subjects</label>
+                        <input type="number" id="subjectCount" class="demo-input" placeholder="e.g. 5" min="1">
+                    </div>
+
+                    <button onclick="generateSubjects()" class="primary-btn">Next</button>
+                </div>
+
+                <div id="step2" class="demo-step-2">
+                    <div id="subjectInputs" class="subject-inputs">
+                        <!-- Dynamic Inputs will appear here -->
+                    </div>
+
+                    <div class="demo-buttons-container">
+                        <button onclick="resetCalculator()" class="secondary-btn">Reset</button>
+                        <button onclick="calculateOverall()" class="primary-btn">Calculate
+                            Overall</button>
+                    </div>
+                </div>
+
+                <div id="resultBox" class="result-box">
+                    <h3 id="percentageText" class="result-percentage">0%</h3>
+                    <p id="statusText" class="result-status">-</p>
+                </div>
+            </div>
+
+            <!-- Python Code Section -->
+            <h2 class="mt-60">Core Logic (Python)</h2>
+            <p class="text-muted">The original project logic written in Python.</p>
+            <div class="code-snippet">
+                <pre>print("Bunkmate started successfully!")
+
+limit = float(input("Enter minimum attendance limit (%): "))
+subjects = int(input("Enter number of subjects: "))
+
+total_classes_all = 0
+total_attended_all = 0
+
+for i in range(1, subjects + 1):
+    print(f"\nSubject {i}")
+    total_classes = int(input("Total classes: "))
+    attended_classes = int(input("Classes attended: "))
+
+    percentage = (attended_classes / total_classes) * 100
+
+    if percentage >= limit:
+        flag = "🟢 Green Flag"
+    else:
+        flag = "🔴 Red Flag"
+
+    print(f"Attendance: {percentage:.2f}% → {flag}")
+
+    total_classes_all += total_classes
+    total_attended_all += attended_classes
+
+overall_percentage = (total_attended_all / total_classes_all) * 100
+
+print("\n--- Overall Attendance ---")
+print(f"Overall Attendance: {overall_percentage:.2f}%")</pre>
+            </div>
+
+            <script>
+                function generateSubjects() {
+                    const count = parseInt(document.getElementById('subjectCount').value);
+                    const container = document.getElementById('subjectInputs');
+
+                    if (!count || count <= 0) {
+                        alert("Please enter a valid number of subjects!");
+                        return;
+                    }
+
+                    container.innerHTML = ''; // Clear previous
+
+                    for (let i = 1; i <= count; i++) {
+                        const row = document.createElement('div');
+                        row.style.cssText = "background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);";
+                        row.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0; font-size: 0.9rem; color: var(--accent-color);">Subject ${i}</h4>
+                                <span id="status-${i}" style="font-size: 0.85rem; font-weight: 600;"></span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 5px;">Total Classes</label>
+                                    <input type="number" class="demo-input subject-total" placeholder="0">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 5px;">Attended</label>
+                                    <input type="number" class="demo-input subject-attended" placeholder="0">
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    }
+
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'block';
+                }
+
+                function calculateOverall() {
+                    const limit = parseFloat(document.getElementById('limitInput').value) || 75;
+                    const totals = document.querySelectorAll('.subject-total');
+                    const attendeds = document.querySelectorAll('.subject-attended');
+
+                    let totalSum = 0;
+                    let attendedSum = 0;
+
+                    for (let i = 0; i < totals.length; i++) {
+                        const t = parseFloat(totals[i].value) || 0;
+                        const a = parseFloat(attendeds[i].value) || 0;
+                        const statusEl = document.getElementById(`status-${i + 1}`);
+
+                        if (a > t) {
+                            alert(`Subject ${i + 1}: Attended classes cannot affect total classes!`);
+                            return;
+                        }
+
+                        // Calculate individual subject status
+                        let subPercentage = 0;
+                        if (t > 0) {
+                            subPercentage = (a / t) * 100;
+                            const isSafe = subPercentage >= limit;
+                            statusEl.innerText = `${subPercentage.toFixed(2)}% ${isSafe ? '🟢' : '🔴'}`;
+                            statusEl.style.color = isSafe ? '#22c55e' : '#ef4444';
+                        } else {
+                            statusEl.innerText = '-';
+                            statusEl.style.color = 'var(--text-secondary)';
+                        }
+
+                        totalSum += t;
+                        attendedSum += a;
+                    }
+
+                    if (totalSum === 0) {
+                        alert("Total classes cannot be zero!");
+                        return;
+                    }
+
+                    const overallPercentage = ((attendedSum / totalSum) * 100).toFixed(2);
+                    const resultBox = document.getElementById('resultBox');
+                    const percentageText = document.getElementById('percentageText');
+                    const statusText = document.getElementById('statusText');
+
+                    resultBox.style.display = "block";
+                    percentageText.innerText = overallPercentage + "%";
+
+                    if (overallPercentage >= limit) {
+                        resultBox.style.background = "rgba(34, 197, 94, 0.1)";
+                        resultBox.style.border = "1px solid #22c55e";
+                        percentageText.style.color = "#22c55e";
+                        statusText.innerText = "🟢 Green Flag! Overall Safe.";
+                    } else {
+                        resultBox.style.background = "rgba(239, 68, 68, 0.1)";
+                        resultBox.style.border = "1px solid #ef4444";
+                        percentageText.style.color = "#ef4444";
+                        statusText.innerText = "🔴 Red Flag! Overall Attendance Low.";
+                    }
+                }
+
+                function resetCalculator() {
+                    document.getElementById('step1').style.display = 'block';
+                    document.getElementById('step2').style.display = 'none';
+                    document.getElementById('subjectInputs').innerHTML = '';
+                    document.getElementById('resultBox').style.display = 'none';
+                    document.getElementById('subjectCount').value = '';
+                }
+            </script>
+
+            <div class="back-link">
+                <a href="projects.html">← Back to Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Shabarish Portfolio</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VocalB - Shabarish Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="education.html">Education</a>
+        <a href="skills.html">Skills</a>
+        <a href="projects.html" class="active">Projects</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+
+    <header class="short-header">
+        <h1>VocalB</h1>
+        <p>Advanced Text-to-Speech Converter</p>
+    </header>
+
+    <section class="visible">
+        <div class="detail-container">
+            <div class="project-meta">
+                <span class="tag">Python</span>
+                <span class="tag">AI/ML</span>
+                <span class="tag">Web Development</span>
+            </div>
+
+            <h2>Overview</h2>
+            <p>
+                VocalB is a powerful Text-to-Speech (TTS) utility developed in Python. It utilizes the
+                <strong>pyttsx3</strong>
+                engine to provide offline voice synthesis with granular control over speech rate and volume.
+                The application also features background music integration and continuous playback looping for a
+                complete audio experience.
+            </p>
+
+            <h2 class="section-heading">Key Features</h2>
+            <ul class="feature-list">
+                <li><strong>Offline Voice Synthesis:</strong> Converts text to speech locally using the pyttsx3 library
+                    without needing an internet connection.</li>
+                <li><strong>Audio Control:</strong> precise adjustment of reading speed (Rate) and audio pitch.</li>
+                <li><strong>Loop Playback:</strong> Continuous speech repetition mode for memorization or testing.</li>
+                <li><strong>Background Ambiance:</strong> Integrated background music playback using Pygame.</li>
+                <li><strong>File Export:</strong> Save generated speech as WAV files for portable use.</li>
+            </ul>
+
+            <h2 class="section-heading">Technologies Used</h2>
+            <p class="text-muted">
+                Built using <strong>Python</strong> for the core AI processing, integrated with a modern
+                <strong>HTML/CSS</strong> frontend.
+            </p>
+
+            <!-- Try VocalB Demo Section -->
+            <div class="demo-card">
+                <h2 class="text-center mb-30">Try VocalB Live</h2>
+
+                <div class="demo-container-inner">
+                    <div class="demo-input-group">
+                        <label for="textInput">Enter Text to Speak</label>
+                        <textarea id="textInput" class="demo-input demo-textarea" rows="4"
+                            placeholder="Type something here...">Hello! Welcome to Shabarish's portfolio. I can read any text you type here.</textarea>
+                    </div>
+
+                    <div class="demo-row">
+                        <div class="demo-control-group">
+                            <label for="rate" class="demo-label-small">Rate (Speed)</label>
+                            <input type="range" id="rate" class="demo-range-input" min="0.5" max="2" value="1"
+                                step="0.1">
+                        </div>
+                        <div class="demo-control-group">
+                            <label for="pitch" class="demo-label-small">Pitch</label>
+                            <input type="range" id="pitch" class="demo-range-input" min="0.5" max="2" value="1"
+                                step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="demo-select-group">
+                        <label for="voiceSelect" class="sr-only">Select Voice</label>
+                        <select id="voiceSelect" class="demo-input">
+                            <option value="">Default Voice</option>
+                        </select>
+                    </div>
+
+                    <div class="demo-options-row">
+                        <div class="demo-control-group">
+                            <label for="musicSelect" class="demo-label-small">Background Music</label>
+                            <select id="musicSelect" class="demo-input">
+                                <option value="">None</option>
+                                <option value="music/Primavera.mp3">Primavera</option>
+                                <option value="music/The Child In Us.mp3">The Child In Us</option>
+                            </select>
+                        </div>
+                        <div class="demo-checkbox-group">
+                            <input type="checkbox" id="loopCheck" class="demo-checkbox-input">
+                            <label for="loopCheck" class="text-muted">Loop Speech</label>
+                        </div>
+                    </div>
+
+                    <div class="demo-btn-group">
+                        <button onclick="speakText()" class="demo-btn-primary">
+                            <span>▶</span> Speak
+                        </button>
+                        <button onclick="stopSpeaking()" class="demo-btn-secondary">
+                            Stop
+                        </button>
+                    </div>
+
+                    <p id="statusMsg" class="demo-status-text"></p>
+                </div>
+            </div>
+
+            <!-- Python Code Section -->
+            <h2 class="mt-60">Core Logic (Python)</h2>
+            <p class="text-muted">The original project logic for VocalB, including audio processing
+                and playback loops.</p>
+            <div class="code-snippet">
+                <pre>import pyttsx3
+import pygame
+import simpleaudio as sa
+from pydub import AudioSegment
+import os
+import time
+
+OUTPUT_FILE = "vocalB_output.wav"
+BG_MUSIC_FILE = "bg_music.mp3"
+
+
+# ---------------- TEXT TO SPEECH ---------------- #
+def text_to_speech(text, rate=150):
+    engine = pyttsx3.init()
+    engine.setProperty("rate", rate)
+    engine.save_to_file(text, OUTPUT_FILE)
+    engine.runAndWait()
+
+
+# ---------------- CHANGE AUDIO SPEED ---------------- #
+def change_audio_speed(speed=1.0):
+    audio = AudioSegment.from_wav(OUTPUT_FILE)
+    modified = audio.speedup(playback_speed=speed)
+    modified.export(OUTPUT_FILE, format="wav")
+
+
+# ---------------- PLAY BACKGROUND MUSIC ---------------- #
+def play_background_music():
+    if not os.path.exists(BG_MUSIC_FILE):
+        print("⚠ Background music file not found. Skipping music.")
+        return
+
+    pygame.mixer.init()
+    pygame.mixer.music.load(BG_MUSIC_FILE)
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)  # loop forever
+
+
+# ---------------- PLAY SPEECH ---------------- #
+def play_speech(loop=False):
+    wave_obj = sa.WaveObject.from_wave_file(OUTPUT_FILE)
+
+    try:
+        while True:
+            play_obj = wave_obj.play()
+            play_obj.wait_done()
+            if not loop:
+                break
+    except KeyboardInterrupt:
+        print("\n⏹ Playback stopped by user.")
+
+
+# ---------------- MAIN PROGRAM ---------------- #
+def main():
+    print("🎙 vocalB.py – Text to Speech Engine\n")
+
+    text = input("Enter text to convert to speech:\n> ")
+
+    try:
+        speed = float(input("Speech speed (1.0 = normal): "))
+    except ValueError:
+        speed = 1.0
+
+    loop_choice = input("Loop speech? (y/n): ").lower() == "y"
+
+    print("\n🔊 Generating speech...")
+    text_to_speech(text)
+
+    print("⚙ Adjusting speed...")
+    change_audio_speed(speed)
+
+    print("🎵 Starting background music...")
+    play_background_music()
+
+    print("▶ Playing speech (Press CTRL+C to stop)")
+    play_speech(loop_choice)
+
+    pygame.mixer.music.stop()
+    print("\n✅ Program ended.")
+
+
+if __name__ == "__main__":
+    main()</pre>
+            </div>
+
+            <script>
+                const synth = window.speechSynthesis;
+                const voiceSelect = document.getElementById('voiceSelect');
+                let voices = [];
+                let isLooping = false;
+                let bgAudio = null; // Audio object for background music
+
+                function populateVoices() {
+                    voices = synth.getVoices();
+                    voiceSelect.innerHTML = '<option value="">Select a Voice</option>';
+                    voices.forEach((voice) => {
+                        const option = document.createElement('option');
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        option.setAttribute('data-name', voice.name);
+                        option.setAttribute('data-lang', voice.lang);
+                        voiceSelect.appendChild(option);
+                    });
+                }
+
+                populateVoices();
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = populateVoices;
+                }
+
+                function speakText() {
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+                    if (bgAudio) {
+                        bgAudio.pause();
+                        bgAudio = null;
+                    }
+
+                    const textInput = document.getElementById('textInput').value;
+                    const statusMsg = document.getElementById('statusMsg');
+                    const shouldLoop = document.getElementById('loopCheck').checked;
+                    const musicFile = document.getElementById('musicSelect').value;
+
+                    isLooping = shouldLoop; // Set global loop state
+
+                    if (textInput !== '') {
+                        // Handle Music
+                        if (musicFile) {
+                            bgAudio = new Audio(musicFile);
+                            bgAudio.loop = true;
+                            bgAudio.volume = 0.3; // Lower volume like in python script
+                            bgAudio.play().catch(e => console.log("Audio play failed (user interaction needed):", e));
+                        }
+
+                        playUtterance(textInput, statusMsg);
+                    } else {
+                        statusMsg.innerText = "Please enter some text first.";
+                    }
+                }
+
+                function playUtterance(text, statusMsg) {
+                    const utterThis = new SpeechSynthesisUtterance(text);
+                    const selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+
+                    for (let i = 0; i < voices.length; i++) {
+                        if (voices[i].name === selectedOption) {
+                            utterThis.voice = voices[i];
+                            break;
+                        }
+                    }
+
+                    utterThis.rate = document.getElementById('rate').value;
+                    utterThis.pitch = document.getElementById('pitch').value;
+
+                    utterThis.onstart = function () {
+                        statusMsg.innerText = isLooping ? "Speaking (Looping)..." : "Speaking...";
+                    };
+
+                    utterThis.onend = function (event) {
+                        if (isLooping) {
+                            // Recursively call to loop
+                            playUtterance(text, statusMsg);
+                        } else {
+                            statusMsg.innerText = "Done.";
+                            setTimeout(() => statusMsg.innerText = "", 2000);
+                            // Stop music when done if not looping
+                            if (bgAudio) {
+                                bgAudio.pause();
+                                bgAudio.currentTime = 0;
+                            }
+                        }
+                    };
+
+                    utterThis.onerror = function (event) {
+                        isLooping = false;
+                        console.error('SpeechSynthesisUtterance.onerror');
+                        statusMsg.innerText = "Error occurred.";
+                        if (bgAudio) bgAudio.pause();
+                    };
+
+                    synth.speak(utterThis);
+                }
+
+                function stopSpeaking() {
+                    isLooping = false; // Break the loop
+                    if (synth.speaking) {
+                        synth.cancel();
+                    }
+
+                    if (bgAudio) {
+                        bgAudio.pause();
+                        bgAudio.currentTime = 0;
+                    }
+
+                    document.getElementById('statusMsg').innerText = "Stopped.";
+                    setTimeout(() => document.getElementById('statusMsg').innerText = "", 2000);
+                }
+            </script>
+
+            <div class="back-link">
+                <a href="projects.html">← Back to Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Shabarish Portfolio</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
